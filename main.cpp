@@ -31,12 +31,7 @@ class ImageSizeTo
     int    getWidth( );
     string getSize( );
 };
-ImageSizeTo::ImageSizeTo( )
-{
-    t_width  = 0;
-    t_height = 0;
-    t_image.read( Geometry( t_width, t_height ), Color( "rgba( 0, 0, 0, 0 )" ) );
-}
+ImageSizeTo::ImageSizeTo( ) : t_width( 0), t_height( 0 ), t_image( Geometry( t_width, t_height ), Color( "rgba( 0, 0, 0, 0 )" ) ) {}
 ImageSizeTo::ImageSizeTo( Image & image ) : t_image( image )
 { setFromGeometry( t_image.geometry( ) ); }
 ImageSizeTo::ImageSizeTo( Image & image, Geometry geoSize ) : t_image( image )
@@ -113,17 +108,17 @@ void saveImageAsSize( int size, Image & image, size_t height, size_t width )
 {
     string sint = static_cast<ostringstream*>( &(ostringstream() << size ) )->str();
 
-    if ( width > size || height > size )
+    if ( width > (size_t)size || height > (size_t)size )
     {
         ImageSizeTo t_image( image, size, size );
         image = t_image.getImage( );
-        image.write( "t-" + sint + "x" + sint + ".png" );
+        image.write( "product-" + sint + "x" + sint + ".png" );
     }
 }
 void processSizedImages( Image & image, size_t height, size_t width )
 {
     // Save changes to image.
-    image.write( "t.png" ); // Orginal template size
+    image.write( "product.png" ); // Orginal template size
 
     saveImageAsSize( 800, image, height, width );
     saveImageAsSize( 600, image, height, width );
@@ -144,6 +139,7 @@ void prepareImage(Image & tphoto, Image & ophoto, size_t height, size_t width )
 }
 void mergeTemplateOverlay( PixelPacket * tpixels, PixelPacket * opixels, size_t height, size_t width )
 {
+    Color transparent("rgba(0,0,0,0)");
     for ( size_t row = 0; row <= height ; ++row )
         for ( size_t column = 0 ; column <= width ; ++column )
         {
