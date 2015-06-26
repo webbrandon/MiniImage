@@ -115,6 +115,17 @@ void saveImageAsSize( int size, Image & image, size_t height, size_t width )
         image.write( "product-" + sint + "x" + sint + ".png" );
     }
 }
+void exportToIcons( Image image )
+{
+    int iconSizes[4] = { 128, 64, 32, 16 };
+    for( int i = 0 ; i < sizeof(iconSizes)/sizeof(*iconSizes) ; i++ )
+    {
+        string sint = static_cast<ostringstream*>( &(ostringstream() << iconSizes[i] ) )->str();
+        ImageSizeTo t_image( image, iconSizes[i], iconSizes[i] );
+        image = t_image.getImage();
+        image.write( "icon-" + sint + "x" + sint + ".ico" );
+    }
+}
 void processSizedImages( Image & image, size_t height, size_t width )
 {
     // Save changes to image.
@@ -126,7 +137,6 @@ void processSizedImages( Image & image, size_t height, size_t width )
     saveImageAsSize( 200, image, height, width );
     saveImageAsSize( 100, image, height, width );
     saveImageAsSize( 50, image, height, width );
-    saveImageAsSize( 35, image, height, width );
 }
 void prepareImage(Image & tphoto, Image & ophoto, size_t height, size_t width )
 {
@@ -170,6 +180,7 @@ int main( int argc, char **argv )
 
     mergeTemplateOverlay(tpixels, opixels, height, width);
     tphoto.syncPixels( );
+    exportToIcons(tphoto);
     processSizedImages( tphoto, height, width );
 
     return 0;
